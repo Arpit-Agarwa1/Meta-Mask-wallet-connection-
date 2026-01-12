@@ -68,3 +68,18 @@ body {
   color: #ff6b6b;
   font-size: 14px;
 }
+
+.wallet-btn.connected {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #00c853, #64dd17);
+  cursor: default;
+}
+
+.wallet-btn.logout {
+  margin-top: 10px;
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+}
+
+.wallet-btn.logout:hover {
+  box-shadow: 0 10px 25px rgba(255, 75, 43, 0.6);
+}

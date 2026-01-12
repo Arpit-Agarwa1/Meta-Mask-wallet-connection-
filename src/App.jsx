@@ -53,12 +53,21 @@ export default function App() {
     <div className="wallet-card">
       <h1>MetaMask Wallet</h1>
 
-      <button
-        className="wallet-btn"
-        onClick={account ? disconnectWallet : connectWallet}
-      >
-        {account ? shortAddress(account) : "Connect Wallet"}
-      </button>
+      {!account ? (
+        <button className="wallet-btn" onClick={connectWallet}>
+          Connect Wallet
+        </button>
+      ) : (
+        <>
+          <button className="wallet-btn connected">
+            {shortAddress(account)}
+          </button>
+
+          <button className="wallet-btn logout" onClick={disconnectWallet}>
+            Logout
+          </button>
+        </>
+      )}
 
       {balance && <p className="balance">Balance: {balance} ETH</p>}
       {error && <p className="error">{error}</p>}
