@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { ethers } from "ethers";
+import "./App.css";
 
 export default function App() {
   const [account, setAccount] = useState(null);
   const [balance, setBalance] = useState(null);
   const [error, setError] = useState("");
+
+  const shortAddress = (address) =>
+    `${address.slice(0, 6)}...${address.slice(-4)}`;
 
   const connectWallet = async () => {
     try {
@@ -14,27 +18,22 @@ export default function App() {
       }
 
       const provider = new ethers.BrowserProvider(window.ethereum);
-
       const accounts = await provider.send("eth_requestAccounts", []);
       const selectedAccount = accounts[0];
 
       setAccount(selectedAccount);
 
       const rawBalance = await provider.getBalance(selectedAccount);
-      const ethBalance = ethers.formatEther(rawBalance);
-      setBalance(ethBalance);
+      setBalance(ethers.formatEther(rawBalance));
       setError("");
     } catch (err) {
       console.error(err);
 
-      // Handle MetaMask / ethers error codes
       if (err.code === 4001 || err.code === "ACTION_REJECTED") {
-        // 4001 = userRejectedRequest (MetaMask), ACTION_REJECTED = ethers wrapper
         setError(
           "You rejected the connection request. Please approve it to connect your wallet."
         );
       } else if (err.code === -32002) {
-        // Request already pending
         setError(
           "A connection request is already open in MetaMask. Check the extension popup."
         );
@@ -44,15 +43,25 @@ export default function App() {
     }
   };
 
+  const disconnectWallet = () => {
+    setAccount(null);
+    setBalance(null);
+    setError("");
+  };
+
   return (
-    <div style={{ padding: "20px" }}>
-      <button onClick={connectWallet}>Connect Wallet</button>
+    <div className="wallet-card">
+      <h1>MetaMask Wallet</h1>
 
-      {account && <p>Connected account: {account}</p>}
+      <button
+        className="wallet-btn"
+        onClick={account ? disconnectWallet : connectWallet}
+      >
+        {account ? shortAddress(account) : "Connect Wallet"}
+      </button>
 
-      {balance && <p>Balance: {balance} ETH</p>}
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {balance && <p className="balance">Balance: {balance} ETH</p>}
+      {error && <p className="error">{error}</p>}
     </div>
   );
 }
